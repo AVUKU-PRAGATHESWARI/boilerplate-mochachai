@@ -16,8 +16,8 @@ suite('Functional Tests', function () {
         .keepOpen()
         .get('/hello')
         .end(function (err, res) {
-          assert.fail(res.status, 200);
-          assert.fail(res.text, 'hello Guest');
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'hello Guest');
           done();
         });
     });
@@ -26,24 +26,38 @@ suite('Functional Tests', function () {
       chai
         .request(server)
         .keepOpen()
-        .get('/hello?name=xy_z')
+        .get('/hello?name=pragathi')
         .end(function (err, res) {
-          assert.fail(res.status, 200);
-          assert.fail(res.text, 'hello xy_z');
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'hello pragathi');
           done();
         });
     });
     // #3
-    test('Send {surname: "Colombo"}', function (done) {
+    test('send {surname: "Colombo"}', function(done) {
+      // we setup the request for you...
       chai
         .request(server)
-        .keepOpen()
         .put('/travellers')
+        /** send {surname: 'Colombo'} here **/
+        .send({ surname: 'Colombo' })
+        // .send({...})
+        .end(function(err, res) {
+          /** your tests here **/
+          assert.equal(res.status, 200, 'response status should be 200');
+          assert.equal(res.type, 'application/json', 'Response should be json');
+          assert.equal(
+            res.body.name,
+            'Cristoforo',
+            'res.body.name should be "Christoforo"'
+          );
+          assert.equal(
+            res.body.surname,
+            'Colombo',
+            'res.body.surname should be "Colombo"'
+          );
 
-        .end(function (err, res) {
-          assert.fail();
-
-          done();
+          done(); // Never forget the 'done()' callback...
         });
     });
     // #4
